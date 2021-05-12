@@ -1,16 +1,20 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Task05
 {
     class Program
     {
         static ToDo toDo = new ToDo();
-        static List<ToDo> toDoList = new List<ToDo>();
+        static BindingList<ToDo> toDoList = new BindingList<ToDo>();
 
         
 
@@ -18,14 +22,37 @@ namespace Task05
         {
             Console.WriteLine("Загрузка данных из файла 'tasks.json': ");
 
-            if (true)
+            BinaryFormatter formatter = new BinaryFormatter();
+
+
+            using (FileStream fs = new FileStream("tasks.json", FileMode.OpenOrCreate))
             {
-                Console.WriteLine("Данные в файле отсутствуют. ");
+                try
+                {
+                    if (formatter != null)
+                    {
+                        var fileText = reader.ReadToEnd();
+                        toDoList = JsonConvert.DeserializeObject<BindingList<ToDo>>();
+
+                        Console.WriteLine($"десериализация: {toDoList} ");
+                    }
+                    else
+                    {
+
+                    }
+
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Данные в файле отсутствуют. ");
+                }
 
             }
+         
+
 
             Console.WriteLine("**************************************");
-            //Console.WriteLine("|№   |Сделано|          Задача ");
+            
 
             while (true)
             {
@@ -58,17 +85,30 @@ namespace Task05
                 else continue;
             }
 
+            Console.WriteLine("| №  |Сделано|          Задача ");
+            int id = 1;
             foreach (var i in toDoList)
             {
-                Console.WriteLine(i.IsDone+" "+i.Title);
-            }
-            toDoList.Add(toDo);
-        }
+                
 
-        private static void PrintTask()
-        {
+                Console.WriteLine("| " + id +"    "+ i.IsDone+"       "+i.Title);
+                id++;
+            }
+
+            int s = 2;
+
+
             
+
+
+            using (FileStream fs = new FileStream("tasks.json", FileMode.OpenOrCreate))
+            {
+                string output = JsonSerializer.Serialize<ToDo>(toDoList);
+
+                writer.Write(output);
+
+                Console.WriteLine("Объект сериализован");
+            }
         }
     }
-
 }
