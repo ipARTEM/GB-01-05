@@ -22,7 +22,8 @@ namespace Task05NET5
 
             DataContractJsonSerializer jsonTasks = new DataContractJsonSerializer(typeof(List<ToDo>));
 
-
+            int id = 1;
+            int idNew=1;
             if (!File.Exists("tasks.json"))
             {
                 using (FileStream fsL = new FileStream("tasks.json", FileMode.OpenOrCreate))
@@ -48,12 +49,16 @@ namespace Task05NET5
                 toDoList = (List<ToDo>)jsonTasks.ReadObject(fsL);
                 foreach (var i in toDoList)
                 {
-                    Console.WriteLine("| " + i.Id + "    " + i.IsDone + "       " + i.Title);
+                    i.Id = id++;
+
+                    Console.WriteLine("| " + i.Id++ + "    " + i.IsDone + "       " + i.Title);
+                    
                 }
             }
 
             while (true)
             {
+                
                 Console.WriteLine("Введите данные по задаче: ");
 
                 Console.WriteLine("Задача:");
@@ -70,8 +75,8 @@ namespace Task05NET5
                     doneAdd = "X";
                 }
                 else doneAdd = " ";
-
-                toDoList.Add(new ToDo() {  Title = titleAdd, IsDone = doneAdd });
+                //int id=toDoList
+                toDoList.Add(new ToDo() { Id = 1,  Title = titleAdd, IsDone = doneAdd }) ;
 
                 Console.WriteLine("Вписать ещё одну задачу или нажмите '-', чтобы показать все задачи");
 
@@ -88,10 +93,9 @@ namespace Task05NET5
             
             foreach (var i in toDoList)
             {
-
-
+                
+                i.Id = idNew++;
                 Console.WriteLine("| " + i.Id + "    " + i.IsDone + "       " + i.Title);
-                i.Id++;
             }
 
             using (FileStream fsL = new FileStream("tasks.json", FileMode.OpenOrCreate))
@@ -100,12 +104,6 @@ namespace Task05NET5
                 jsonTasks.WriteObject(fsL, toDoList);
 
             }
-
-
-
-
-
-
 
         }
     }
