@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.Serialization.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -10,39 +12,45 @@ namespace Task05NET5
     class Program
     {
         
-        static BindingList<ToDo> toDoList = new BindingList<ToDo>();
+         
 
 
         static async Task Main(string[] args)
         {
+            
+            List<ToDo> toDoList = new List<ToDo>();
 
-            Console.WriteLine("**************************************");
-            Console.WriteLine("Загрузка данных из файла 'tasks.json': ");
+            DataContractJsonSerializer jsonTasks = new DataContractJsonSerializer(typeof(List<ToDo>));
 
 
-            // сохранение данных
-            using (FileStream fs = new FileStream("tasks.json", FileMode.OpenOrCreate))
+            if (!File.Exists("tasks.json"))
             {
-                ToDo toDo = new ToDo();
-                await JsonSerializer.SerializeAsync<ToDo>(fs, toDo);
-                Console.WriteLine("Сохранение данных");
+                using (FileStream fsL = new FileStream("tasks.json", FileMode.OpenOrCreate))
+                {
+                    jsonTasks.WriteObject(fsL, toDoList);
+
+                }
+
+                Console.WriteLine("Файл'tasks.json' был создан! ");
+
+            }
+            else
+            {
+                Console.WriteLine("Загрузка данных из файла 'tasks.json': ");
+                Console.WriteLine("***************************************");
             }
 
-            // чтение данных
-            using (FileStream fs = new FileStream("tasks.json", FileMode.OpenOrCreate))
+
+            using (FileStream fsL = new FileStream("tasks.json", FileMode.OpenOrCreate))
             {
-                ToDo toDoRead = await JsonSerializer.DeserializeAsync<ToDo>(fs);
-                Console.WriteLine($"IsDone: {toDoRead.IsDone}  Title: {toDoRead.Title}");
+                Console.WriteLine("| №  |Сделано|          Задача ");
+                //чтение данных
+                toDoList = (List<ToDo>)jsonTasks.ReadObject(fsL);
+                foreach (var i in toDoList)
+                {
+                    Console.WriteLine("| " + i.Id + "    " + i.IsDone + "       " + i.Title);
+                }
             }
-
-     
-
-
-
-
-       
-
-
 
             while (true)
             {
@@ -50,6 +58,7 @@ namespace Task05NET5
 
                 Console.WriteLine("Задача:");
 
+                
                 string titleAdd = Console.ReadLine();
 
                 Console.WriteLine("Состояние задачи: нажмите '+'-задача выполнена или любой другой символ задача  не выполнена");
@@ -62,7 +71,7 @@ namespace Task05NET5
                 }
                 else doneAdd = " ";
 
-                toDoList.Add(new ToDo() { Title = titleAdd, IsDone = doneAdd });
+                toDoList.Add(new ToDo() {  Title = titleAdd, IsDone = doneAdd });
 
                 Console.WriteLine("Вписать ещё одну задачу или нажмите '-', чтобы показать все задачи");
 
@@ -76,21 +85,22 @@ namespace Task05NET5
             }
 
             Console.WriteLine("| №  |Сделано|          Задача ");
-            int id = 1;
+            
             foreach (var i in toDoList)
             {
 
 
-                Console.WriteLine("| " + id + "    " + i.IsDone + "       " + i.Title);
-                id++;
+                Console.WriteLine("| " + i.Id + "    " + i.IsDone + "       " + i.Title);
+                i.Id++;
             }
 
-            // чтение данных
-            using (FileStream fs = new FileStream("tasks.json", FileMode.OpenOrCreate))
+            using (FileStream fsL = new FileStream("tasks.json", FileMode.OpenOrCreate))
             {
-                ToDo toDoRead = await JsonSerializer.DeserializeAsync<ToDo>(fs);
-                Console.WriteLine($"IsDone: {toDoRead.IsDone}  Title: {toDoRead.Title}");
+                //сохранение данных
+                jsonTasks.WriteObject(fsL, toDoList);
+
             }
+
 
 
 
