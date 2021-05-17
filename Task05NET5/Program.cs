@@ -23,7 +23,7 @@ namespace Task05NET5
             DataContractJsonSerializer jsonTasks = new DataContractJsonSerializer(typeof(List<ToDo>));
 
             int id = 1;
-            int idNew=1;
+            
             if (!File.Exists("tasks.json"))
             {
                 using (FileStream fsL = new FileStream("tasks.json", FileMode.OpenOrCreate))
@@ -88,9 +88,9 @@ namespace Task05NET5
                 }
                 else continue;
             }
-
+            Table:
             Console.WriteLine("| №  |Сделано|          Задача ");
-            
+            int idNew = 1;
             foreach (var i in toDoList)
             {
                 
@@ -105,6 +105,50 @@ namespace Task05NET5
 
             }
 
+            do
+            {
+                Console.WriteLine("Если Вы хотите выйти, нажмите 'пробел' и 'Ввод'  или число с номером задачи, чтобы отметить её как сделанную/не сделанную: ");
+
+                string line= Console.ReadLine();
+                int lineInt;
+
+                if (line == " ")
+                {
+                    break;
+                }
+
+                try
+                {
+                    lineInt = Convert.ToInt32(line);
+                    if(0<lineInt && lineInt <= (toDoList.Count+1))
+                    {
+                        foreach (var i in toDoList)
+                        {
+                            if (i.Id== lineInt)
+                            {
+                                if (i.IsDone == "X") i.IsDone = " ";
+                                else i.IsDone = "X";
+                                goto Table;
+                            }
+                        }
+                    }
+
+                }
+                catch (Exception)
+                {
+
+                   
+                }
+
+           
+
+
+
+            } while (true);
+
+            
+
         }
+        
     }
 }
