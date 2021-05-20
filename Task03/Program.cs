@@ -15,35 +15,24 @@ namespace Task03
     {
         static void Main(string[] args)
         {
-            /*
-            BinaryFormatter binary = new BinaryFormatter();
-            binary.Serialize(new FileStream("s1.bin", FileMode.OpenOrCreate), str);     //сириализация в бинарный формат
-
-            BinaryFormatter deBinaty = new BinaryFormatter();
-            string newStr = (string)binary.Deserialize(new FileStream("s1.bin", FileMode.Open));  //дисириализация 
-
-            Console.WriteLine(newStr);
-            */
             int text=0;
+
+
             do
             {
-                
                 Console.WriteLine("Введите с клавиатуры произвольное число (0...255), данное число будет записано в бинарный файл: ");
-                try
+
+                if (byte.TryParse(Console.ReadLine(), out var inputByte))
                 {
-                    text =Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine("Ввод соответствует байту, и помещен в переменную inputByte!");
+                    Console.WriteLine(inputByte);
+                    break;
 
-                    if (0 <= text && text <= 255)
-                    {
-                        break;
-
-                    }
                 }
-                catch (Exception)
+                else
                 {
-                    
+                    Console.WriteLine("Некоректный ввод!");
                 }
-
             } while (true);
 
             BinaryFormatter formatter = new BinaryFormatter();

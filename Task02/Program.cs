@@ -13,10 +13,8 @@ namespace Task02
         {
 
             DateTime dateTime = DateTime.Now;
-
-            string str = dateTime.ToString("HH:mm:ss");
+            var str = dateTime.ToString("HH:mm:ss") + Environment.NewLine;
             string filename = "startup.txt";
-            File.AppendAllText(filename, Environment.NewLine);
             File.AppendAllText(filename, str);
 
             Console.WriteLine($"В фаил 'startup.txt' дописана строка с текущим временем: {dateTime.ToString("HH:mm:ss")} ");
